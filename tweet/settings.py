@@ -41,6 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # External 
+    'rest_framework',
+    
+    # Internal
     'mytweet',
 ]
 
@@ -104,7 +109,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+MAX_TWEET_LENGTH = 240
 
+
+LOGIN_URL = "/login"
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 

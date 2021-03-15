@@ -4,11 +4,12 @@
 {% block content %}
 <div class="container py-5">
 <div>
-    <h2 class="text-center">Welcome to Tweetful</h2>
+    <h2 class="text-center">Welcome to Tweet<span style="color:red; text-decoration: underline; font-family:cursive;">O</span></h2>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-md-4 mx-auto col-10">
+            <div class="d-none alert alert-danger" id="form-error"></div>
             <form  id ="tweet_form" method="post" action="/create-tweet/"> 
                 {% csrf_token %}    
                 <input type="hidden" value="/" name="next">
@@ -26,6 +27,18 @@
 
 <script>
 
+    var errorDiv = document.getElementById('form-error')
+
+    function formErrorHandler(msg, display){
+        if(display === true){
+            // display error 
+            errorDiv.setAttribute("class", "d-block alert alert-danger")
+            errorDiv.innerText = msg
+        }else{
+            // no error, hide div
+            errorDiv.setAttribute("class", "d-none alert alert-danger")
+        }
+    }
     var form = document.getElementById('tweet_form')
 
     function createTweetForm(event){
@@ -35,29 +48,46 @@
         const url = myForm.getAttribute("action")
         const method = myForm.getAttribute("method")
         const xhr = new XMLHttpRequest()
-        //     const responseType ="json"
-        // xhr.responseType = responseType
+            const responseType ="json"
+        xhr.responseType = responseType
         xhr.open(method, url)
         xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
         xhr.onload  = function(){
             if(xhr.status === 201){
                 const newTweet = xhr.response
-                const newTweetJson =JSON.parse(newTweet) 
-                const tweetedElement = formatTweetElements(newTweetJson)
+                // const newTweetJson =JSON.parse(newTweet) 
+                const tweetedElement = formatTweetElements(newTweet)
                 const ogHTML = tweetsContainer.innerHTML
                 tweetsContainer.innerHTML = tweetedElement + ogHTML
                 myForm.reset()
             }else if(xhr.status === 400){
                 const errorJson = xhr.response
                 console.log(errorJson)
-            }else if (xhr.status = 500){
+                const contentError = errorJson.content
+                let contentErrorMsg;
+                if(contentError){
+                    contentErrorMsg = contentError[0]
+                    if(contentErrorMsg){
+                        formErrorHandler(contentErrorMsg, true)
+                    }else{
+                        alert("An error occurred, please try again")
+                    }
+                }else{
+                    alert("An error occurred, please try again!")
+                }
+            }else if (xhr.status === 401){
                 const errorJson = xhr.response
-               alert("There was a server error, please try again")
+                alert("You must login first")
+                window.location.href="/login"
+            } else if(xhr.status === 403){
+                alert("You must login first")
+            }else if(xhr.status = 500){
+                alert("There was a server error, please try again")
             }
     }
     xhr.onerror = function(){
-        alert("An error occured, please try again!")
+        alert("An error occurred, please try again!")
     }
     xhr.send(myFormData)
     }
@@ -74,7 +104,7 @@
         xhr.onload  = function(){
         var jsonResponse = xhr.response
         serverResponse = xhr.response
-        listedItems = serverResponse.response
+        listedItems = serverResponse
        var finalTweets =""
        var i;
        for(i=0; i<listedItems.length; i++){
@@ -94,7 +124,7 @@
         console.log(tweet_id, currentCount)
     }
     function likeBtn(tweet){
-        return "<button class='btn btn-primary btn-sm' onclick='likeHandler(" + tweet.id +"," +tweet.likes +")'>" + tweet.likes + " Like" + "</button>"
+        return "<button class='btn btn-primary btn-sm' onclick='likeHandler(" + tweet.id +"," +tweet.likes +")'>" + tweet.likes + "     <i class='fa fa-thumbs-o-up'> </i> </button>"
     }
     function formatTweetElements(tweet){
         var formatedTweet =  "<div class='col-12 border mb-3' tweet_id='" + tweet.id +"'>" + 

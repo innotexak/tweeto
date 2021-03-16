@@ -110,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 MAX_TWEET_LENGTH = 240
+TWEET_ACTION_OPTIONS = ['like', 'unlike', 'retweet']
 
 
 LOGIN_URL = "/login"

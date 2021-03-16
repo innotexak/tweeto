@@ -22,7 +22,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.home_view, name="home"),
     path('tweets/', views.tweet_list_view, name='tweet_list'),
-    path('tweets/<int:tweet_id>', views.tweet_detail_view, name="detail_view"),
     path('create-tweet/', views.tweet_form_view, name="create"),
+    path('tweets/<int:tweet_id>', views.tweet_detail_view, name="detail_view"),
+    path('api/tweets/<int:tweet_id>/delete>', views.tweet_delete_view, name="delete"),
+    path('api/tweets/action',views.tweet_action_view, name='action'),
     path('admin/', admin.site.urls),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT )
